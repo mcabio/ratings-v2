@@ -37,6 +37,25 @@ def show_user(user_id):
 
     return render_template('user_details.html', user=user)
 
+@app.route('/users', methods=["POST"])
+def register_user():
+    """Create new user"""
+
+    email = request.form.get("email")
+    password = request.form.get("password")
+
+    user = crud.get_user_by_email(email)
+    if user:
+        flash("Cannot create an account with that email. Try again")
+    else:
+        user = crud.create_user(email, password)
+        db.session.add(user)
+        db.session.commit()
+        flash("Account created! Please log in.")
+    return redirect('/')
+
+
+
 @app.route('/movies')
 def all_movies():
     """View all movies"""
